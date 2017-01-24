@@ -2,20 +2,26 @@ package ptcg.scharnitzke.com.ptcgapp;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
+import android.view.Surface;
 import android.view.TextureView;
 
 public class ScanQRCodeActivity extends AppCompatActivity {
     private static final String TAG = "AndroidCameraAPI";
 
-    private TextureView qrTextureView;
     private CameraManager cameraManager;
+    private TextureView qrTextureView;
+    private Size imageDimension;
     private String cameraId;
 
     protected CameraDevice cameraDevice;
@@ -28,8 +34,6 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
         qrTextureView = (TextureView) findViewById(R.id.qrCameraTexture);
         assert qrTextureView != null;
-
-        cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -74,10 +78,23 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     };
 
     private void openCamera() {
+        cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
+        Log.e(TAG, "=== Opening camera ===");
+
+        try {
+            cameraId = cameraManager.getCameraIdList()[0];
+            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            assert map != null;
+
+            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createCameraPreview() {
-
+        // TODO: implement this
     }
 }
