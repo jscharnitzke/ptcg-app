@@ -58,6 +58,8 @@ public class ScanQRCodeActivity extends AppCompatActivity {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             Log.e(TAG, "onOpened");
+            cameraDevice = camera;
+            createCameraPreview();
         }
 
         @Override
@@ -72,6 +74,10 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     };
 
     private void openCamera() {
+
+    }
+
+    private void createCameraPreview() {
 
     }
 }
