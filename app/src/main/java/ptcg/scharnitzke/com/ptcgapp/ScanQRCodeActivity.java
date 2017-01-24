@@ -37,6 +37,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
         qrTextureView = (TextureView) findViewById(R.id.qrCameraTexture);
         assert qrTextureView != null;
+        qrTextureView.setSurfaceTextureListener(textureListener);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -97,6 +98,8 @@ public class ScanQRCodeActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(ScanQRCodeActivity.this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
+
+            cameraManager.openCamera(cameraId, stateCallback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
