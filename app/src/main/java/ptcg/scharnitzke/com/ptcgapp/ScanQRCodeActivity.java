@@ -10,6 +10,8 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,13 +22,14 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public class ScanQRCodeActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final String TAG = "AndroidCameraAPI";
 
+    private Handler mBackgroundHandler;
+    private HandlerThread mBackgroundThread;
     private TextureView qrTextureView;
     private Size imageDimension;
     private String cameraId;
@@ -87,6 +90,24 @@ public class ScanQRCodeActivity extends AppCompatActivity {
         }
     };
 
+    protected void startBackgroundThread() {
+        mBackgroundThread = new HandlerThread("Camera Background");
+        mBackgroundThread.start();
+        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+    }
+
+    protected void stopBackgroundThread() {
+        mBackgroundThread.quitSafely();
+
+        try {
+            mBackgroundThread.join();
+            mBackgroundThread = null;
+            mBackgroundHandler = null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void openCamera() {
         CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
@@ -144,6 +165,17 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     }
 
     private void updatePreview() {
-        // TODO: implement this
+        if(cameraDevice == null) {
+            Log.e(TAG, "updatePreview error");
+            return;
+        }
+
+        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+
+        try {
+            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 }
