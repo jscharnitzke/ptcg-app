@@ -178,4 +178,26 @@ public class ScanQRCodeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.e(TAG, "onResume");
+        startBackgroundThread();
+
+        if(qrTextureView.isAvailable()) {
+            openCamera();
+        } else {
+            qrTextureView.setSurfaceTextureListener(textureListener);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e(TAG, "onPause");
+
+        stopBackgroundThread();
+        super.onPause();
+    }
 }
