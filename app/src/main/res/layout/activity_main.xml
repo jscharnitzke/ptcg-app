@@ -10,18 +10,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ptcg.scharnitzke.com.ptcgapp.MainActivity">
 
-    <TextView android:text=""
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtContent" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/scanButtonText"
-        android:id="@+id/scanQRButton" />
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imgView"
-        android:contentDescription="@string/placeholderQRText" />
+        android:orientation="vertical">
+
+        <TextView android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtContent" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scanButtonText"
+            android:id="@+id/scanQRButton" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgView"
+            android:contentDescription="@string/placeholderQRText" />
+    </LinearLayout>
 </RelativeLayout>
