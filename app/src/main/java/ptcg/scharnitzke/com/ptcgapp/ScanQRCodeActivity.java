@@ -13,6 +13,6 @@ public class ScanQRCodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qrcode);
 
-        cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        this.cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
     }
 }
