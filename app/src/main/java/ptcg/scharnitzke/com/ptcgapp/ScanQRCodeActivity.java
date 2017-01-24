@@ -1,6 +1,7 @@
 package ptcg.scharnitzke.com.ptcgapp;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -9,6 +10,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.view.Surface;
 import android.view.TextureView;
 
 public class ScanQRCodeActivity extends AppCompatActivity {
+    private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final String TAG = "AndroidCameraAPI";
 
     private CameraManager cameraManager;
@@ -89,6 +92,11 @@ public class ScanQRCodeActivity extends AppCompatActivity {
             assert map != null;
 
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+
+            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(ScanQRCodeActivity.this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                return;
+            }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
