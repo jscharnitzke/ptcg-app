@@ -7,4 +7,8 @@
     android:orientation="vertical"
     android:keepScreenOn="true"
     tools:context="ptcg.scharnitzke.com.ptcgapp.ScanQRCodeActivity">
+    <TextureView
+        android:id="@+id/qrCameraTexture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
