@@ -2,4 +2,5 @@
     <string name="app_name">PTCG App</string>
     <string name="scanButtonText">Scan</string>
     <string name="placeholderQRText">Placeholder QR Code</string>
+    <string name="detectorFailedText">Could not set up the detector!</string>
 </resources>
