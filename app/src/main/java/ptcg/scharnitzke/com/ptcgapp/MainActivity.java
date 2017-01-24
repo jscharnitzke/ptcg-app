@@ -1,5 +1,6 @@
 package ptcg.scharnitzke.com.ptcgapp;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.util.SparseArrayCompat;
@@ -15,41 +16,20 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btn = (Button) findViewById(R.id.scanQRButton);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView txtView = (TextView) findViewById(R.id.txtContent);
+        findViewById(R.id.scanQRButton).setOnClickListener(this);
+    }
 
-                ImageView myImageView = (ImageView) findViewById(R.id.imgView);
-                Bitmap myBitmap = BitmapFactory.decodeResource(
-                        getApplicationContext().getResources(),
-                        R.drawable.puppy
-                );
-                myImageView.setImageBitmap(myBitmap);
-
-                BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
-                        .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
-                        .build();
-
-                if(!detector.isOperational()) {
-                    txtView.setText(R.string.detectorFailedText);
-                    return;
-                }
-
-                Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
-                SparseArray<Barcode> barcodes = detector.detect(frame);
-
-                Barcode thisCode = barcodes.valueAt(0);
-                txtView.setText(thisCode.rawValue);
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.scanQRButton) {
+            // launch QR code scanner activity
+        }
     }
 }
