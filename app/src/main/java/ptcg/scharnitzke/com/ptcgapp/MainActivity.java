@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
                 SparseArray<Barcode> barcodes = detector.detect(frame);
+
+                Barcode thisCode = barcodes.valueAt(0);
+                txtView.setText(thisCode.rawValue);
             }
         });
     }
