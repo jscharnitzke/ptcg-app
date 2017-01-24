@@ -72,12 +72,13 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
         @Override
         public void onDisconnected(@NonNull CameraDevice camera) {
-
+            cameraDevice.close();
         }
 
         @Override
         public void onError(@NonNull CameraDevice camera, int error) {
-
+            cameraDevice.close();
+            cameraDevice = null;
         }
     };
 
