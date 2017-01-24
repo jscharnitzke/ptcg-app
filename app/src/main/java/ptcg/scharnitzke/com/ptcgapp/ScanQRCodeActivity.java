@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,18 +18,22 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
+import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class ScanQRCodeActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final String TAG = "AndroidCameraAPI";
 
-    private CameraManager cameraManager;
     private TextureView qrTextureView;
     private Size imageDimension;
     private String cameraId;
 
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSession;
+    protected CaptureRequest.Builder captureRequestBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +88,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     };
 
     private void openCamera() {
-        cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
         Log.e(TAG, "=== Opening camera ===");
 
@@ -107,6 +112,38 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     }
 
     private void createCameraPreview() {
+        try {
+            SurfaceTexture texture = qrTextureView.getSurfaceTexture();
+            assert texture != null;
+
+            texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
+            Surface surface = new Surface(texture);
+
+            captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            captureRequestBuilder.addTarget(surface);
+
+            cameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    if (cameraDevice == null) {
+                        return;
+                    }
+
+                    cameraCaptureSession = session;
+                    updatePreview();
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                    Toast.makeText(ScanQRCodeActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
+                }
+            }, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updatePreview() {
         // TODO: implement this
     }
 }
