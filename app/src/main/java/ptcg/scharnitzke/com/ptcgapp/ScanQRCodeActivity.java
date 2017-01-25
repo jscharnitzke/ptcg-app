@@ -18,9 +18,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
+
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.util.Collections;
 
@@ -28,6 +34,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final String TAG = "AndroidCameraAPI";
 
+    private BarcodeDetector barcodeDetector;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private TextureView qrTextureView;
@@ -46,6 +53,28 @@ public class ScanQRCodeActivity extends AppCompatActivity {
         qrTextureView = (TextureView) findViewById(R.id.qrCameraTexture);
         assert qrTextureView != null;
         qrTextureView.setSurfaceTextureListener(textureListener);
+
+        barcodeDetector = new BarcodeDetector.Builder(this)
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
+
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+
+            }
+
+            @Override
+            public void receiveDetections(Detector.Detections<Barcode> detections) {
+                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
+
+                if(barcodes.size() != 0) {
+                    Log.w(TAG, "-- Found a barcode!");
+                } else {
+                    Log.w(TAG, "-- Searching for barcodes...");
+                }
+            }
+        });
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -66,7 +95,8 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+            Frame frame = new Frame.Builder().setBitmap(qrTextureView.getBitmap()).build();
+            barcodeDetector.receiveFrame(frame);
         }
     };
 
