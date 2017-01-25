@@ -73,7 +73,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
-            Log.e(TAG, "onOpened");
+            Log.w(TAG, "=== Camera opened ===");
             cameraDevice = camera;
             createCameraPreview();
         }
@@ -111,7 +111,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     private void openCamera() {
         CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
-        Log.e(TAG, "=== Opening camera ===");
+        Log.w(TAG, "=== Opening camera ===");
 
         try {
             cameraId = cameraManager.getCameraIdList()[0];
@@ -166,7 +166,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
     private void updatePreview() {
         if(cameraDevice == null) {
-            Log.e(TAG, "updatePreview error");
+            Log.e(TAG, "-- ERROR: updatePreview: cameraDevice is null");
             return;
         }
 
@@ -183,7 +183,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Log.e(TAG, "onResume");
+        Log.w(TAG, "=== Resuming camera ===");
         startBackgroundThread();
 
         if(qrTextureView.isAvailable()) {
@@ -195,7 +195,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        Log.e(TAG, "onPause");
+        Log.w(TAG, "=== Pausing camera ===");
 
         stopBackgroundThread();
         super.onPause();
