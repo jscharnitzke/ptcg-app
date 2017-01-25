@@ -2,6 +2,7 @@ package ptcg.scharnitzke.com.ptcgapp;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -14,6 +15,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,23 +60,9 @@ public class ScanQRCodeActivity extends AppCompatActivity {
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
-            @Override
-            public void release() {
-
-            }
-
-            @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections) {
-                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-
-                if(barcodes.size() != 0) {
-                    Log.w(TAG, "-- Found a barcode!");
-                } else {
-                    Log.w(TAG, "-- Searching for barcodes...");
-                }
-            }
-        });
+        if(!barcodeDetector.isOperational()) {
+            Log.w(TAG, "-- Barcode Detector dependencies are not yet available...");
+        }
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -95,8 +83,13 @@ public class ScanQRCodeActivity extends AppCompatActivity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            Frame frame = new Frame.Builder().setBitmap(qrTextureView.getBitmap()).build();
-            barcodeDetector.receiveFrame(frame);
+            Bitmap bitmap = qrTextureView.getBitmap();
+            Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+            SparseArray<Barcode> barcodes = barcodeDetector.detect(frame);
+
+            if(barcodes.size() != 0) {
+                Log.w(TAG, "-- Found a barcode!");
+            }
         }
     };
 
